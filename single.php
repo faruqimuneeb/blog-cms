@@ -3,26 +3,20 @@
   
   $sql_get_post = isset($_GET['post']) ? "SELECT * FROM tbl_posts WHERE id='".$_GET['post']."'" : "" ;
   
-  $result= $link->prepare($sql_get_post);
+  //$result= $link->prepare($sql_get_post);
   // geting post from the database
-          $row = $result->execute();
-//          print_r($result->fetch(PDO::FETCH_ASSOC));
-          $num_rows= ($result->fetchColumn() > 0) ? true : false;
-          if($num_rows ){
-
-            print_r($result->fetch(PDO::FETCH_ASSOC));
-            //print_r($post);
-            exit();
-
+            $qry_res= $link->query($sql_get_post);
+              while($post= $qry_res->fetch()){
               ?>
             <div class="blog-post">
-                <h2 class="blog-post-title"><a href="single.php?post=<?php echo $post['id']; ?>"><?php echo $post['post_title']; ?></a></h2>
+                <h2 class="blog-post-title"><?php echo $post['post_title']; ?></h2>
                 <p class="blog-post-meta"><?php echo $post['date_time']; ?> by <a href="#"><?php echo $post['post_author']; ?></a></p>
                 <div class="post-body">
-                  <?php $post_body =$post['post_body']; 
+                  <?php echo $post['post_body']; 
                   ?>
                 </div> 
               </div><!-- /.blog-post --> <!-- post ends-->
+              <?php } ?>
              <blockquote class="alert alert-info">2 Comments</blockquote>
 
           <div class="comment-area">
@@ -65,12 +59,7 @@
 
           <br>
 
-          <?php //if ends as well comments section
-          }else{
-              echo 'No post found...';
-
-          }
-        ?>
+          
 
 
          
