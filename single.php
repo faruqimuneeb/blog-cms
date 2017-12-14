@@ -1,32 +1,29 @@
 <?php
-	include 'includes/header.php';
+  include 'includes/header.php';
+  
+  $sql_get_post = isset($_GET['post']) ? "SELECT * FROM tbl_posts WHERE id='".$_GET['post']."'" : "" ;
+  
+  $result= $link->prepare($sql_get_post);
+  // geting post from the database
+          $row = $result->execute();
+//          print_r($result->fetch(PDO::FETCH_ASSOC));
+          $num_rows= ($result->fetchColumn() > 0) ? true : false;
+          if($num_rows ){
 
-  $sql_get_post = isset($_GET['post']) ? "SELECT * FROM tbl_posts WHERE id='".mysqli_real_escape_string($link,$_GET['post'])."'" : "" ;
+            print_r($result->fetch(PDO::FETCH_ASSOC));
+            //print_r($post);
+            exit();
 
-  $result= $link->query($sql_get_post);
-?>
-           <?php 
-            if($result->num_rows >0){
-
-              while ($row = $result->fetch_assoc()) {
-           ?>
-           <div class="blog-post">
-            <h1 class="blog-post-title"><?php echo $row['post_title']; ?></h1>
-            <p class="blog-post-meta"><?php echo $row['date_time']; ?> by <a href="#"><?php echo $row['post_author']; ?></a></p>
-            <?php
-              echo $row['post_body'];  
-             ?>
-            </div><!-- /.blog-post -->
-          <?php
-              }
-           } 
-          ?>
-           
-
-
-            
-
-          <blockquote class="alert alert-info">2 Comments</blockquote>
+              ?>
+            <div class="blog-post">
+                <h2 class="blog-post-title"><a href="single.php?post=<?php echo $post['id']; ?>"><?php echo $post['post_title']; ?></a></h2>
+                <p class="blog-post-meta"><?php echo $post['date_time']; ?> by <a href="#"><?php echo $post['post_author']; ?></a></p>
+                <div class="post-body">
+                  <?php $post_body =$post['post_body']; 
+                  ?>
+                </div> 
+              </div><!-- /.blog-post --> <!-- post ends-->
+             <blockquote class="alert alert-info">2 Comments</blockquote>
 
           <div class="comment-area">
             <form>
@@ -68,6 +65,15 @@
 
           <br>
 
+          <?php //if ends as well comments section
+          }else{
+              echo 'No post found...';
+
+          }
+        ?>
+
+
+         
         <?php 
         	include "includes/sidebar.php";
         	include "includes/footer.php";

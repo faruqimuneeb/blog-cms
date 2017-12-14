@@ -4,11 +4,9 @@
 
   $sql_cats= "SELECT * FROM tbl_categories";
 
-  $result = $link->query($sql_cats);
+  $result = $link->prepare($sql_cats);
 
 ?>
-
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -36,8 +34,11 @@
             <?php 
               $home_active = isset($_GET['category']) ? "<a class=\"nav-link\" href=\"index.php\">Home</a>" : "<a class=\"nav-link active\" href=\"index.php\">Home</a>";
                echo $home_active; 
-              if($result->num_rows > 0){
-                while($row = $result->fetch_assoc()){
+               $result->execute();
+               $num_rows= ($result->fetchColumn() >0 ) ? true: false;
+             
+              if($num_rows){
+                while($row = $result->fetch(PDO::FETCH_ASSOC)){
                   $cat_active = ( isset($_GET['category']) && $row['id'] == $_GET['category'] ) ? "active" : "";
                   ?>
                     <a class="nav-link <?php echo $cat_active; ?>" href="index.php?category=<?php echo $row['id']; ?>"><?php echo $row['cat_text']; ?></a>

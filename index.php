@@ -1,9 +1,11 @@
 <?php
 	include 'includes/header.php';
 
-	$sql_fetch_posts= (isset($_GET['category'])) ? "SELECT * FROM tbl_posts WHERE post_category='".mysqli_real_escape_string($link,$_GET['category'])."'" : "SELECT * FROM tbl_posts";
+	$sql_fetch_posts= (isset($_GET['category'])) ? "SELECT * FROM tbl_posts WHERE post_category='".$_GET['category']."'" : "SELECT * FROM tbl_posts";
 
-	$result= $link->query($sql_fetch_posts);
+	$result= $link->prepare($sql_fetch_posts);
+
+	//$result= $link->query($sql_fetch_posts);
 ?>
           <div class="blog-header">
 	        <div class="container">
@@ -12,9 +14,11 @@
 	        </div>
 	      </div>
 	      <?php 
-	      	if($result->num_rows >0 ){
+	      	$result->execute();
+	      	$num_rows= ($result->fetchColumn() > 0) ? true : false;
+	      	if($num_rows ){
 
-	      		while($post= $result->fetch_assoc()){ ?>
+	      		while($post= $result->fetch(PDO::FETCH_ASSOC)){ ?>
 
 	      		<div class="blog-post">
 		            <h2 class="blog-post-title"><a href="single.php?post=<?php echo $post['id']; ?>"><?php echo $post['post_title']; ?></a></h2>
@@ -28,12 +32,8 @@
           		</div><!-- /.blog-post -->
 	      		<?php 
 	      		}
-
-
-	      	}
+			}
 	      ?>
-          
-			
         <?php 
         	include "includes/sidebar.php";
         	include "includes/footer.php";
